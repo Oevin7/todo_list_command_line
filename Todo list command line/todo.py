@@ -1,5 +1,6 @@
 #Todo List Command Line App
 from datetime import datetime
+import re
 
 print("Welcome to your todo list! Would you like to create or manage a task?")
 user_choice = input()
@@ -19,6 +20,14 @@ if user_choice.lower() == "create":
         todo_lst.writelines(date_added + '\n')
         for task in tasks: 
             todo_lst.writelines("Uncompleted: " + task)
+
+    with open("todo.txt", "r") as task_file:
+            modified = task_file.read()
+
+            modified_task_file = modified.replace(",", " ")
+
+    with open("todo.txt", "w") as task_file:
+        task_file.write(modified_task_file)
 
 
 elif user_choice.lower() == "manage":
@@ -43,32 +52,41 @@ elif user_choice.lower() == "manage":
         unwanted_task = []
 
         unwanted_task.append(user_tasks)
-    
-        if "," in unwanted_task:
-            unwanted_task.remove(",")
+        
+        with open("todo.txt", "r") as task_file:
+            deleted_tasks = task_file.read()
+            for work in unwanted_task:
+                if work in deleted_tasks:
+                    modified_task_file = deleted_tasks.replace(work, "")
 
-        with open("todo.txt") as tasks, open("edited_todo.txt", "w+") as task_file:
-            for task in tasks:
-                for work in unwanted_task:
-                    task = task.replace(work, " ")
-                task_file.write(task)
-                if work not in unwanted_task:
-                    print("That task is not on your list.")
+        with open("todo.txt", "w") as task_file:  
+            task_file.write(modified_task_file)
+                    
+
 
     elif user_manage.lower() == "complete":
         completed_tasks = []
         user_completion = input("Which tasks would you like to mark a completed?\n")
         completed_tasks.append(user_completion)
 
-        with open("todo.txt") as tasks, open("completed.txt", "a+") as task_file:
-           completion_date = str(datetime.now()) + "\n"
-           task_file.writelines(completion_date)
-           for task in tasks:
-                for work in completed_tasks:
-                    completion = "Tasks Completed: " + work + "\n" + "Congratulations on completing your task! Keep it up :)"
-                    break
-                task_file.writelines(completion)
-                break
+
+        with open("todo.txt", "r") as task_file:
+            tasks_completed = task_file.read()
+
+        with open("todo.txt", "w") as task_file:
+            for task in completed_tasks:
+                if task in tasks_completed:
+                    modified_task_file = tasks_completed.replace(task, "")
+                    task_file.write(modified_task_file)
+                else:
+                    print("That task is not in the file.")
+
+
+        with open("todo.txt", "a") as task_file:
+            for task in completed_tasks:
+                complete_desc = "\nTasks completed at " + str(datetime.now()) + "\nCompleted Tasks: " + task    
+            task_file.write(complete_desc)
+
     else:
         print("That task cannot be performed")
                 
