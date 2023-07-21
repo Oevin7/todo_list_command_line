@@ -1,6 +1,5 @@
 #Todo List Command Line App
 from datetime import datetime
-import re
 
 print("Welcome to your todo list! Would you like to create or manage a task?")
 user_choice = input()
